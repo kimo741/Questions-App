@@ -1,18 +1,18 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <div class="h1">are you redy to start questions ?</div>
+    <b-button @click="startQ" variant="success"> Start </b-button>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld
-  }
-}
+  methods: {
+    startQ() {
+      this.$router.push({ name: "question", params: { id: 0 } });
+    },
+  },
+};
 </script>
+
+<style></style>
