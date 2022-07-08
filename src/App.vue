@@ -1,15 +1,10 @@
 <template>
   <div id="app">
-    <Nav />
-
     <router-view />
   </div>
 </template>
 <script>
-import Nav from "@/components/nav/MainNav.vue";
-export default {
-  components: { Nav },
-};
+export default {};
 </script>
 
 <style lang="scss">

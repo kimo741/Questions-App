@@ -1,12 +1,39 @@
 <template>
   <div class="home">
-    {{ asnwers }}
+    <Nav
+      :showReview="doneSelected"
+      :quistionNum="quis[id]"
+      :selectedVal="selectPass"
+      @nextEmiter="next"
+      @previoueFromNav="previous"
+      @showResult="showResult"
+      @addToCorrect="addToCorrect"
+      @checkSelcted="checkSelcted"
+    />
     <b-container>
+      <b-card v-if="notAnswer">
+        <b-card-title class="text-danger text-center h6">
+          you are not sellect any answer , pleas select answer and click next
+          again
+        </b-card-title>
+      </b-card>
+
       <QuestionsView
+        v-show="!showResults"
+        v-if="quis[id]"
         :showReview="doneSelected"
         :quistionNum="quis[id]"
         @previousEmiter="previous"
         @nextEmiter="next"
+        @showResult="showResult"
+        @passSelected="passSelected"
+        @addToCorrect="addToCorrect"
+        @checkSelcted="checkSelcted"
+      />
+      <ResultsView
+        v-show="showResults"
+        :answers="asnwers"
+        :correctAnwser="correctAnwser"
       />
     </b-container>
   </div>
@@ -14,12 +41,16 @@
 
 <script>
 import { api } from "@/boot/axios.js";
-import QuestionsView from "@/components/QuestionsView.vue";
+import QuestionsView from "@/components/question/QuestionsView.vue";
+import ResultsView from "@/components/results/ResultsView.vue";
+import Nav from "@/components/nav/MainNav.vue";
 
 export default {
   name: "HomeView",
   components: {
     QuestionsView,
+    ResultsView,
+    Nav,
   },
   data() {
     return {
@@ -27,15 +58,22 @@ export default {
       id: 0,
       asnwers: [],
       doneSelected: false,
+      correctAnwser: 0,
+      selectPass: "",
+      showResults: false,
+      notAnswer: false,
     };
   },
   watch: {
-    id(val) {
-      this.$route.params.id = val;
-      val >= 10 ? (this.doneSelected = true) : false;
+    id(nVal) {
+      this.$route.params.id = nVal;
+      if (nVal >= this.quis.length - 1) {
+        this.doneSelected = true;
+      } else {
+        this.doneSelected = false;
+      }
     },
   },
-
   methods: {
     async getQuestions() {
       api
@@ -59,7 +97,9 @@ export default {
       this.id++;
       this.paramHandler();
     },
+    // check answer before push it
     next(select) {
+      this.selectPass = null;
       if (this.asnwers.includes(select)) {
         const getObj = this.asnwers.findIndex((i) => {
           i == select;
@@ -70,6 +110,19 @@ export default {
         this.asnwers.push(select);
         this.handelIncement();
       }
+    },
+    showResult(show) {
+      this.showResults = show;
+      // this.correctAnwser = correctAns;
+    },
+    passSelected(select) {
+      this.selectPass = select;
+    },
+    addToCorrect(correct) {
+      this.correctAnwser += correct;
+    },
+    checkSelcted(chechAnswer) {
+      this.notAnswer = chechAnswer;
     },
   },
   created() {
